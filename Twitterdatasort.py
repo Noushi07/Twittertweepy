@@ -30,24 +30,33 @@ columns = ['user_id', 'name', 'screen name', 'country', 'website','bio', 'follow
 row = []
 
 def unrolled_url():
-    url = followers.url
-    site = requests.head(url,allow_redirects=False,verify= True)
-    try:
-        a = site.url
-    except MissingSchema:
-        pass
-    return a
+    for follow in followers:
+      try:
+        a=(follow.url)
+        site = requests.get(url=a,allow_redirects=True)
+        url=(site.url)
+        return url
+      except (MissingSchema,requests.exceptions.ConnectionError):
+          url_null=('None')
+          return url_null
+          pass
 
 def latest_tweet():
-    status = api.get_status(user)
-    status.created_at = latest_tweet
-    print(latest_tweet)
-try:
-    for x in followers:
-        row.append([x.id,x.name,x.screen_name,x.location,unrolled_url,x.description,x.followers_count,x.friends_count,latest_tweet])
-except :
-    time.sleep(60)
+  for follower in followers:
+    try:
+       tweet=(follower.status.created_at)
+       return tweet
+    except AttributeError:
+        tweet_null=('None')
+        return tweet_null
+        pass
+    
+for follow in followers:
+    a=latest_tweet()
+    b=unrolled_url()
+    row.append([follow.id,follow.name,follow.screen_name,follow.location,b,follow.followers_count,follow.friends_count,a,follow.description])
+    
 df = pd.DataFrame(row, columns = columns)
 
-df.to_csv('datasoorting.csv')
+df.to_csv('Datacalendly.csv')
 
